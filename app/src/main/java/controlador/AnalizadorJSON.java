@@ -1,5 +1,7 @@
 package controlador;
 
+import android.util.Log;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -35,7 +37,7 @@ public class AnalizadorJSON {
 
         // {"nc":"1", "n":"Luke", "pa":"Skywalker", "sa":"-", "e":50, "s":5, "c":"ISC"}
 
-        //--------------------------------ENVIO DE INFORMACION-----------------------------
+        //--------------------------------ENVIO DE INFORMACION-------------------
         try {
 
             String cadenaJSON = "{\"nc\":\"" + URLEncoder.encode(String.valueOf(datos.get("nc")), "UTF-8") +
@@ -62,7 +64,8 @@ public class AnalizadorJSON {
 
             os = new BufferedOutputStream(conexion.getOutputStream());
 
-            os.write(cadenaJSON.getBytes());
+            os.write(cadenaJSON.getBytes()); //datos del alumno para el alta
+
             os.flush();
             os.close();
 
@@ -83,10 +86,15 @@ public class AnalizadorJSON {
                 cadena.append(fila+"\n");
             }
 
+            Log.i("MSJ->", cadena.toString());
+
+
             is.close();
             json = cadena.toString();
-            jsonObject = new JSONObject(json);
 
+
+            jsonObject = new JSONObject(String.valueOf(cadena));
+            //jsonObject = new JSONObject(json);
         } catch (IOException | JSONException e) {
             e.printStackTrace();
         }
@@ -96,51 +104,62 @@ public class AnalizadorJSON {
 
 
     // ---------------- Peticion HTTP CONSULTAS -------------------------------------------------------------------
-     public JSONObject consultaHTTP(String url){
-         try {
-             mUrl = new URL(url);
-             conexion = (HttpURLConnection) mUrl.openConnection();
-             //activar el envio de datos a traves de HTTP
-             conexion.setDoOutput(true);
-             //indicar el metodo de envio
-             conexion.setRequestMethod("POST");
-             //Establecer el formato de envio de informacion
-             conexion.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
 
-             os = new BufferedOutputStream(conexion.getOutputStream());
+    public JSONObject consultaHTTP(String url){
 
-             os.write(Integer.parseInt(""));
-             os.flush();
-             os.close();
+        //peticion
+        try {
+            mUrl = new URL(url);
+            conexion = (HttpURLConnection) mUrl.openConnection();
 
-         } catch (MalformedURLException e) {
-             e.printStackTrace();
-         } catch (ProtocolException e) {
-             e.printStackTrace();
-         } catch (IOException e) {
-             e.printStackTrace();
-         }
+            //activar el envio de datos a traves de HTTP
+            conexion.setDoOutput(true);
+            //indicar el metodo de envio
+            conexion.setRequestMethod("POST");
 
-         //--------------------------------RECIBIR RESPUESTA-----------------------------
-         try {
-             is = new BufferedInputStream(conexion.getInputStream());
-             BufferedReader br = new BufferedReader(new InputStreamReader(is));
-             StringBuilder cadena = new StringBuilder();
+            //Establecer el formato de envio de informacion
+            conexion.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
 
-             String fila = null;
-             while( (fila = br.readLine()  ) != null ){
-                 cadena.append(fila+"\n");
-             }
+            os = new BufferedOutputStream(conexion.getOutputStream());
 
-             is.close();
-             json = cadena.toString();
-             jsonObject = new JSONObject(json);
 
-         } catch (IOException | JSONException e) {
-             e.printStackTrace();
-         }
+            //os.write(Integer.parseInt(""));
 
-         return jsonObject;
 
-     }//metodo consulta HTTP
+            os.flush();
+            os.close();
+        } catch (MalformedURLException | ProtocolException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        //Resultado o respuesta
+        try {
+            is = new BufferedInputStream(conexion.getInputStream());
+            BufferedReader br = new BufferedReader(new InputStreamReader(is));
+            StringBuilder cadena = new StringBuilder();
+
+            String fila = null;
+            while( (fila = br.readLine()  ) != null ){
+                cadena.append(fila+"\n");
+            }
+
+            Log.i("MSJ->", cadena.toString().substring(4));
+
+            is.close();
+            json = cadena.toString().substring(4);
+
+            jsonObject = new JSONObject(json);
+
+        } catch (IOException | JSONException e) {
+            e.printStackTrace();
+        }
+
+        return jsonObject;
+
+
+    }//metodo consultaHTTP
+
+
 }//clase

@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import org.json.JSONException;
@@ -21,8 +22,8 @@ import controlador.AnalizadorJSON;
 
 public class ActivityAltas extends AppCompatActivity {
 
-    EditText cajaNumControl;
-    EditText cajaNombre;
+    EditText cajaNumControl, cajaNombre, cajaPrimerAp,cajaSegundoAp, cajaEdad;
+    Spinner spinnerSemestre, spinnerCarrera;
     static boolean mensajeResultados;
 
     @Override
@@ -32,30 +33,42 @@ public class ActivityAltas extends AppCompatActivity {
 
         cajaNumControl = findViewById(R.id.caja_num_control_altas);
         cajaNombre = findViewById(R.id.caja_nombre_altas);
+        cajaPrimerAp=findViewById(R.id.caja_primer_ap_altas);
+        cajaSegundoAp=findViewById(R.id.caja_segundo_ap_altas);
+        cajaEdad=findViewById(R.id.caja_edad_altas);
+        spinnerSemestre=findViewById(R.id.spinner_semestre_altas);
+        spinnerCarrera=findViewById(R.id.spinner_carrera_altas);
+
     }
 
     public void agregarRegistro(View v) {
         String nc = cajaNumControl.getText().toString();
         String n = cajaNombre.getText().toString();
-        String pa = "Skywalker";
-        String sa = "-";
-        String e = "37";
-        String s = "7";
-        String c = "I.S.C.";
+        String pa = cajaPrimerAp.getText().toString();
+        String sa = cajaSegundoAp.getText().toString();
+        String e = cajaEdad.getText().toString();
+        String s = spinnerSemestre.getSelectedItem().toString();
+        String c = spinnerCarrera.getSelectedItem().toString();
 
-
-        //Verificar que la comunicación con WIFI funcione
-        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo ni = cm.getActiveNetworkInfo();
-
-        if(ni != null && ni.isConnected()) {
-            new AgregarAlumno().execute(nc, n, pa, sa, e, s, c);
-            Toast.makeText(this, mensajeResultados?"EXITO":"ME CAMBIO DE CARRERA", Toast.LENGTH_LONG).show();
+        //Verificar que no vengan datos vacios
+        if (nc.isEmpty() || n.isEmpty() || pa.isEmpty() || e.isEmpty() || s.isEmpty() || c.isEmpty()) {
+            Toast.makeText(this, "CAMPOS VACIOS!!", Toast.LENGTH_LONG).show();
         } else {
-            Log.e("MSJ-->", "Error en el WIFI");
-        }
 
-        Toast.makeText(this, "Magia", Toast.LENGTH_LONG).show();
+
+            //Verificar que la comunicación con WIFI funcione
+            ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+            NetworkInfo ni = cm.getActiveNetworkInfo();
+
+            if (ni != null && ni.isConnected()) {
+                new AgregarAlumno().execute(nc, n, pa, sa, e, s, c);
+                Toast.makeText(this, mensajeResultados ? "EXITO" : "ME CAMBIO DE CARRERA", Toast.LENGTH_LONG).show();
+            } else {
+                Log.e("MSJ-->", "Error en el WIFI");
+            }
+
+            Toast.makeText(this, "Magia", Toast.LENGTH_LONG).show();
+        }
     }
 }
 

@@ -51,6 +51,7 @@
     </string-array>
 
     <string name="btn_altas_alumnos">AGREGAR</string>
+    <string name="btn_cambios_alumnos">MODIFICAR</string>
     <!--
     This string is used for square devices and overridden by hello_world in
     values-round/strings.xml for round devices.

@@ -30,12 +30,12 @@ public class ActivityBajas extends Activity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_consultas);
+        setContentView(R.layout.activity_bajas);
 
         new MostrarAlumnos().execute();
 
 
-        listviewAlumnos = findViewById(R.id.listview_alumnos);
+        listviewAlumnos = findViewById(R.id.listview_alumnos_bajas);
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, datos);
         listviewAlumnos.setAdapter(adapter);
 

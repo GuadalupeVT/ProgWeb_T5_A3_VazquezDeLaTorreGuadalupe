@@ -3,7 +3,6 @@ package com.example.bd_android_http;
 import android.app.Activity;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
@@ -53,7 +52,7 @@ public class ActivityConsultas extends Activity {
 
             try {
                 JSONArray jsonArray = jsonObject.getJSONArray("alumnos");
-                Log.i("MSJ->", String.valueOf(jsonArray));
+
 
                 String cadena = "";
                 for (int i=0; i<jsonArray.length();i++){
@@ -67,7 +66,6 @@ public class ActivityConsultas extends Activity {
                             jsonArray.getJSONObject(i).getString("c");
 
                     datos.add(cadena);
-                    Log.i("MSJ->", cadena);
                 }
 
             } catch (JSONException e) {

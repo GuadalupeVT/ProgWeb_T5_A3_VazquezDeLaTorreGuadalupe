@@ -3,6 +3,7 @@ package com.example.bd_android_http;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
@@ -78,47 +79,49 @@ public class ActivityModificar extends AppCompatActivity {
             NetworkInfo ni = cm.getActiveNetworkInfo();
 
             if (ni != null && ni.isConnected()) {
-                new ModificarAlumno().execute(nc, n, pa, sa, e, s, c);
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        String url = "http://192.168.0.6:80/ago_dic_2020/Aplicacion_ABCC/API_REST_Android/api_cambios_alumnos.php";
+                        String metodo = "POST";
+
+                        Map<String, String> mapDatos = new HashMap<String, String>();
+                        mapDatos.put("nc", nc);
+                        mapDatos.put("n", n);
+                        mapDatos.put("pa", pa);
+                        mapDatos.put("sa", sa);
+                        mapDatos.put("e", e);
+                        mapDatos.put("s", s);
+                        mapDatos.put("c", c);
+
+                        AnalizadorJSON aj = new AnalizadorJSON();
+                        JSONObject resultado = aj.peticionHTTP(url, metodo, mapDatos);
+
+                        boolean exito = false;
+                        try {
+                            exito = resultado.getBoolean("exito");
+                            ActivityModificar.mensajeResultados = exito;
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(getBaseContext(), mensajeResultados ? "EXITO" : "No se pudo modificar", Toast.LENGTH_LONG).show();
+                                Intent i=new Intent(getBaseContext(),ActivityCambios.class);
+                                startActivity(i);
+                            }
+                        });
+                    }
+                }).start();
 
 
-
-                Toast.makeText(this, mensajeResultados ? "EXITO" : "ME CAMBIO DE CARRERA", Toast.LENGTH_LONG).show();
             } else {
                 Log.e("MSJ-->", "Error en el WIFI");
             }
 
             Toast.makeText(this, "Magia", Toast.LENGTH_LONG).show();
         }
-    }
-}
-
-class ModificarAlumno extends AsyncTask<String, String, String> {
-
-    @Override
-    protected String doInBackground(String... datos) {
-
-        String url = "http://192.168.0.6:80/ago_dic_2020/Aplicacion_ABCC/API_REST_Android/api_cambios_alumnos.php";
-        String metodo = "POST";
-
-        Map<String, String> mapDatos = new HashMap<String, String>();
-        mapDatos.put("nc", datos[0]);
-        mapDatos.put("n", datos[1]);
-        mapDatos.put("pa", datos[2]);
-        mapDatos.put("sa", datos[3]);
-        mapDatos.put("e", datos[4]);
-        mapDatos.put("s", datos[5]);
-        mapDatos.put("c", datos[6]);
-
-        AnalizadorJSON aj = new AnalizadorJSON();
-        JSONObject resultado = aj.peticionHTTP(url, metodo, mapDatos);
-
-        boolean exito = false;
-        try {
-            exito = resultado.getBoolean("exito");
-            ActivityAltas.mensajeResultados = exito;
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return String.valueOf(exito);
     }
 }

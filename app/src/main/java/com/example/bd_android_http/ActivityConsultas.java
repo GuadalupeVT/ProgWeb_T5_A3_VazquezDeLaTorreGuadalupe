@@ -96,7 +96,8 @@ public class ActivityConsultas extends Activity {
                 String url="";
 
 
-
+                recycler.removeAllViewsInLayout();
+                datos.clear();
 
 
                 if(opcion.getSelectedItemId()==0){
@@ -154,9 +155,10 @@ public class ActivityConsultas extends Activity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        adapter=new AdaptadorAlumno(datos);
+
+                        AdaptadorAlumno adapter2=new AdaptadorAlumno(datos);
                         adapter.notifyDataSetChanged();
-                        recycler.setAdapter(adapter);
+                        recycler.setAdapter(adapter2);
                     }
                 });
             }//run

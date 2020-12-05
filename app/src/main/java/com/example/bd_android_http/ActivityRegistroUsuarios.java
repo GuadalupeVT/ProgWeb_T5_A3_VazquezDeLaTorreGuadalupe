@@ -51,10 +51,41 @@ public class ActivityRegistroUsuarios extends AppCompatActivity {
             NetworkInfo ni = cm.getActiveNetworkInfo();
 
             if (ni != null && ni.isConnected()) {
-                new AgregarUsuario().execute(u,p);
-                Toast.makeText(this, mensajeResultados ? "EXITO" : "ME CAMBIO DE CARRERA", Toast.LENGTH_LONG).show();
-               Intent i=new Intent(this, MainActivity.class);
-                startActivity(i);
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        String url = "http://192.168.0.6:80/ago_dic_2020/Aplicacion_ABCC/API_REST_Android/api_altas_usuario.php";
+                        String metodo = "POST";
+
+                        Map<String, String> mapDatos = new HashMap<String, String>();
+                        mapDatos.put("u", u);
+                        mapDatos.put("p", p);
+
+                        AnalizadorJSON aj = new AnalizadorJSON();
+                        JSONObject resultado = aj.peticionHTTPUsuarios(url, metodo, mapDatos);
+
+                        boolean exito = false;
+                        try {
+                            exito = resultado.getBoolean("exito");
+                            ActivityRegistroUsuarios.mensajeResultados = exito;
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(getBaseContext(), mensajeResultados ? "EXITO" : "ME CAMBIO DE CARRERA", Toast.LENGTH_LONG).show();
+                                Intent i=new Intent(getBaseContext(), MainActivity.class);
+                                startActivity(i);
+                            }
+                        });
+                    }
+                }).start();
+
+
+
+
             } else {
                 Log.e("MSJ-->", "Error en el WIFI");
             }
@@ -64,30 +95,3 @@ public class ActivityRegistroUsuarios extends AppCompatActivity {
     }
 }
 
-class AgregarUsuario extends AsyncTask<String, String, String> {
-
-    @Override
-    protected String doInBackground(String... datos) {
-
-        String url = "http://192.168.0.6:80/ago_dic_2020/Aplicacion_ABCC/API_REST_Android/api_altas_usuario.php";
-        String metodo = "POST";
-
-        Map<String, String> mapDatos = new HashMap<String, String>();
-        mapDatos.put("u", datos[0]);
-        mapDatos.put("p", datos[1]);
-
-        AnalizadorJSON aj = new AnalizadorJSON();
-        JSONObject resultado = aj.peticionHTTPUsuarios(url, metodo, mapDatos);
-
-        boolean exito = false;
-        try {
-            exito = resultado.getBoolean("exito");
-            ActivityRegistroUsuarios.mensajeResultados = exito;
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return String.valueOf(exito);
-    }
-
-
-}

@@ -39,27 +39,32 @@ public class MainActivity extends AppCompatActivity {
 
         switch (v.getId()){
             case R.id.btn_acceso:  //VALIDAR USUARIO Y CONTRASE{A EN BD DE MySQL
+                                    consultarUsuario();
+                                    break;
+            case R.id.btn_registro:
+                                    i=new Intent(this, ActivityRegistroUsuarios.class);
+                                    startActivity(i);
+                                    break;
+        }
+    }
 
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
+
+    public void consultarUsuario(){
+
                 String u = usuario.getText().toString();
                 String p = contraseña.getText().toString();
-
-
                 //Verificar que no vengan datos vacios
                 if (u.isEmpty() || p.isEmpty() ) {
                     Toast.makeText(getBaseContext(), "CAMPOS VACIOS!!", Toast.LENGTH_LONG).show();
                 } else {
-
-
                     //Verificar que la comunicación con WIFI funcione
                     ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
                     NetworkInfo ni = cm.getActiveNetworkInfo();
 
                     if (ni != null && ni.isConnected()) {
-                       // new ValidarUsuario().execute(u,p);
-                        runOnUiThread(new Runnable() {
+                        //Nuevo hilo
+
+                        new Thread(new Runnable() {
                             @Override
                             public void run() {
                                 String url = "http://192.168.0.6:80/ago_dic_2020/Aplicacion_ABCC/API_REST_Android/api_validar_usuario.php";
@@ -79,57 +84,29 @@ public class MainActivity extends AppCompatActivity {
                                 } catch (JSONException e) {
                                     e.printStackTrace();
                                 }
+
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Toast.makeText(getBaseContext(), mensajeResultados ? "EXITO" : "Usuario no encontrado", Toast.LENGTH_LONG).show();
+                                        if(mensajeResultados){
+                                            i=new Intent(getBaseContext(), ActivityMenu.class);
+                                            startActivity(i);
+                                        }
+                                    }
+                                });
                             }
-                        });
+                        }).start();
+
+
 
                     } else {
                         Log.e("MSJ-->", "Error en el WIFI");
                     }
 
-
-                }
-                    }//run
-                }).start();
-                Toast.makeText(getBaseContext(), mensajeResultados ? "EXITO" : "ME CAMBIO DE CARRERA", Toast.LENGTH_LONG).show();
-                if(mensajeResultados){
-                    i=new Intent(getBaseContext(), ActivityMenu.class);
-                    startActivity(i);
                 }
 
 
-
-                                    break;
-            case R.id.btn_registro:
-                                    i=new Intent(this, ActivityRegistroUsuarios.class);
-                                    startActivity(i);
-                                    break;
-        }
-    }
-}
-class ValidarUsuario extends AsyncTask<String, String, String> {
-
-    @Override
-    protected String doInBackground(String... datos) {
-
-        String url = "http://192.168.0.6:80/ago_dic_2020/Aplicacion_ABCC/API_REST_Android/api_validar_usuario.php";
-        String metodo = "POST";
-
-        Map<String, String> mapDatos = new HashMap<String, String>();
-        mapDatos.put("u", datos[0]);
-        mapDatos.put("p", datos[1]);
-
-        AnalizadorJSON aj = new AnalizadorJSON();
-        JSONObject resultado = aj.peticionHTTPUsuarios(url, metodo, mapDatos);
-
-        boolean exito = false;
-        try {
-            exito = resultado.getBoolean("exito");
-            MainActivity.mensajeResultados = exito;
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return String.valueOf(exito);
-    }
-
+            }
 
 }

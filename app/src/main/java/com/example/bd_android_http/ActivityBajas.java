@@ -27,6 +27,7 @@ import controlador.AnalizadorJSON;
 
 public class ActivityBajas extends Activity {
 
+    private static boolean mensajeResultados;
     RecyclerView recycler;
 
     ArrayList<String> datos = new ArrayList<>();
@@ -114,7 +115,9 @@ public class ActivityBajas extends Activity {
             boolean exito = false;
             try {
                 exito = resultado.getBoolean("exito");
-                ActivityAltas.mensajeResultados = exito;
+                ActivityBajas.mensajeResultados = exito;
+                Intent i=new Intent(getBaseContext(),ActivityBajas.class);
+                startActivity(i);
             } catch (JSONException e) {
                 e.printStackTrace();
             }

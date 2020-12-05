@@ -33,6 +33,10 @@ public class ActivityMenu extends AppCompatActivity {
                 i = new Intent(this, ActivityConsultas.class);
                 startActivity(i);
                 break;
+            case R.id.btn_cerrar:
+                i=new Intent(this,MainActivity.class);
+                finish();
+                startActivity(i);
         }
     }
 }

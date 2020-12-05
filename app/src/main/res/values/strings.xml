@@ -50,6 +50,14 @@
         <item>LA</item>
     </string-array>
 
+    <string-array name="parametro">
+        <item>Numero de control</item>
+        <item>Carrera</item>
+        <item>Semestre</item>
+    </string-array>
+
+    <string name="parametro_busqueda">Ingresa parametro de busqueda</string>
+
     <string name="btn_altas_alumnos">AGREGAR</string>
     <string name="btn_cambios_alumnos">MODIFICAR</string>
     <!--

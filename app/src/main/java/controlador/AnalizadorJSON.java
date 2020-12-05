@@ -164,4 +164,132 @@ public class AnalizadorJSON {
     }//metodo consultaHTTP
 
 
+    // ---------------- Peticion HTTP CONSULTAS -------------------------------------------------------------------
+
+    public JSONObject consultaHTTPParametro(String url, String cadenaJSON){
+
+        //peticion
+        try {
+            mUrl = new URL(url);
+            conexion = (HttpURLConnection) mUrl.openConnection();
+
+            //activar el envio de datos a traves de HTTP
+            conexion.setDoOutput(true);
+            //indicar el metodo de envio
+            conexion.setRequestMethod("POST");
+
+            //tamaño preestablecido o fijo para la cadena enviada
+            conexion.setFixedLengthStreamingMode(cadenaJSON.length());
+
+            //Establecer el formato de envio de informacion
+            conexion.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+
+            os = new BufferedOutputStream(conexion.getOutputStream());
+
+            os.write(cadenaJSON.getBytes()); //datos del alumno para el alta
+
+            os.flush();
+            os.close();
+        } catch (MalformedURLException | ProtocolException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        //Resultado o respuesta
+        try {
+            is = new BufferedInputStream(conexion.getInputStream());
+            BufferedReader br = new BufferedReader(new InputStreamReader(is));
+            StringBuilder cadena = new StringBuilder();
+
+            String fila = null;
+            while( (fila = br.readLine()  ) != null ){
+                cadena.append(fila+"\n");
+            }
+
+            Log.i("MSJ->", cadena.toString().substring(4));
+
+            is.close();
+            json = cadena.toString().substring(4);
+
+            jsonObject = new JSONObject(json);
+
+        } catch (IOException | JSONException e) {
+            e.printStackTrace();
+        }
+
+        return jsonObject;
+
+
+    }//metodo consultaHTTP
+
+
+    //-------------------------------------------metodo para de Usuarios---------------------------
+    public JSONObject peticionHTTPUsuarios(String url, String metodo, Map datos){
+
+
+        //--------------------------------ENVIO DE INFORMACION-------------------
+        try {
+
+            String cadenaJSON = "{\"u\":\"" + URLEncoder.encode(String.valueOf(datos.get("u")), "UTF-8") +
+                    "\", \"p\":\"" + URLEncoder.encode(String.valueOf(datos.get("p")), "UTF-8") + "\"}";
+
+            mUrl = new URL(url);
+            conexion = (HttpURLConnection) mUrl.openConnection();
+
+            //activar el envio de datos a traves de HTTP
+            conexion.setDoOutput(true);
+            //indicar el metodo de envio
+            conexion.setRequestMethod(metodo);
+
+            //tamaño preestablecido o fijo para la cadena enviada
+            conexion.setFixedLengthStreamingMode(cadenaJSON.length());
+
+            //Establecer el formato de envio de informacion
+            conexion.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+
+            os = new BufferedOutputStream(conexion.getOutputStream());
+
+            os.write(cadenaJSON.getBytes()); //datos del alumno para el alta
+
+            os.flush();
+            os.close();
+
+        } catch (UnsupportedEncodingException | MalformedURLException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        //--------------------------------RECIBIR RESPUESTA-----------------------------
+        try {
+            is = new BufferedInputStream(conexion.getInputStream());
+            BufferedReader br = new BufferedReader(new InputStreamReader(is));
+            StringBuilder cadena = new StringBuilder();
+
+            String fila = null;
+            while( (fila = br.readLine()  ) != null ){
+                cadena.append(fila+"\n");
+            }
+
+            Log.i("MSJ->", cadena.toString());
+
+
+            is.close();
+            json = cadena.toString().substring(4);
+
+            jsonObject = new JSONObject(json);
+
+
+            jsonObject = new JSONObject(json);
+            //jsonObject = new JSONObject(json);
+        } catch (IOException | JSONException e) {
+            e.printStackTrace();
+        }
+
+        return jsonObject;
+    }//metodo peticionHTTP
+
+
+
 }//clase

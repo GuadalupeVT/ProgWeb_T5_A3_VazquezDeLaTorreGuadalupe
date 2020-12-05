@@ -10,8 +10,29 @@
     <TextView
         android:id="@+id/textView4"
         android:layout_width="match_parent"
-        android:layout_height="61dp"
+        android:layout_height="33dp"
         android:text="Buscar Registros" />
+
+    <Spinner
+        android:id="@+id/spinner_opcion"
+        android:layout_width="match_parent"
+        android:layout_height="38dp"
+        android:entries="@array/parametro" />
+
+    <EditText
+        android:id="@+id/caja_parametro"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="@string/parametro_busqueda"
+        android:inputType="textPersonName" />
+
+    <Button
+        android:id="@+id/btn_buscar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="consultarAlumno"
+        android:text="@string/btn_modulo_consultas" />
 
     <androidx.recyclerview.widget.RecyclerView
         xmlns:android="http://schemas.android.com/apk/res/android"
@@ -20,4 +41,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+
+
+
+
 </LinearLayout>

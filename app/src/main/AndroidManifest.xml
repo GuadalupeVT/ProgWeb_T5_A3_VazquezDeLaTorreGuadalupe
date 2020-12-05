@@ -13,7 +13,8 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.BD_Android_HTTP"
         android:usesCleartextTraffic="true">
-        <activity android:name=".ActivityModificar"></activity>
+        <activity android:name=".ActivityRegistroUsuarios"></activity>
+        <activity android:name=".ActivityModificar" />
         <activity android:name=".ActivityCambios" />
         <activity android:name=".ActivityBajas" />
         <activity android:name=".ActivityConsultas" />

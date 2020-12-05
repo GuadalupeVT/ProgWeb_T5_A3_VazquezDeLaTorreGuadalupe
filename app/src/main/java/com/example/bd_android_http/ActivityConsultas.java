@@ -109,15 +109,15 @@ public class ActivityConsultas extends Activity {
                     }
                 }else  if(opcion.getSelectedItemId()==1){
                     try {
-                        cadenaJSON = "{\"c\":\"" + URLEncoder.encode( parametro.getText().toString(), "UTF-8") +"\"}";
-                        url= "http://192.168.0.6:80/ago_dic_2020/Aplicacion_ABCC/API_REST_Android/api_consultas_alumnos_carrera.php";
+                        cadenaJSON = "{\"n\":\"" + URLEncoder.encode( parametro.getText().toString(), "UTF-8") +"\"}";
+                        url= "http://192.168.0.6:80/ago_dic_2020/Aplicacion_ABCC/API_REST_Android/api_consultas_alumnos_nombre.php";
                     } catch (UnsupportedEncodingException e) {
                         e.printStackTrace();
                     }
                 } if(opcion.getSelectedItemId()==2){
                     try {
-                        cadenaJSON = "{\"s\":\"" + URLEncoder.encode( parametro.getText().toString(), "UTF-8") +"\"}";
-                        url= "http://192.168.0.6:80/ago_dic_2020/Aplicacion_ABCC/API_REST_Android/api_consultas_alumnos_semestre.php";
+                        cadenaJSON = "{\"pa\":\"" + URLEncoder.encode( parametro.getText().toString(), "UTF-8") +"\"}";
+                        url= "http://192.168.0.6:80/ago_dic_2020/Aplicacion_ABCC/API_REST_Android/api_consultas_alumnos_primerAp.php";
                     } catch (UnsupportedEncodingException e) {
                         e.printStackTrace();
                     }

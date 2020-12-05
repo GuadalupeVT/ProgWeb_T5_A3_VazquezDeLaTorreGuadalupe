@@ -52,8 +52,8 @@
 
     <string-array name="parametro">
         <item>Numero de control</item>
-        <item>Carrera</item>
-        <item>Semestre</item>
+        <item>Nombre</item>
+        <item>PrimerAp</item>
     </string-array>
 
     <string name="parametro_busqueda">Ingresa parametro de busqueda</string>

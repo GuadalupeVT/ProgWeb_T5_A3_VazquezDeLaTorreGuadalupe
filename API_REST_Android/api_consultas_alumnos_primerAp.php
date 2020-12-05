@@ -15,9 +15,9 @@
         } else {
             $filtro = json_decode($cadena_JSON, true);
 
-            $s = $filtro['s'];
+            $s = $filtro['pa'];
 
-            $sql = "SELECT * FROM Alumnos WHERE semestre='$s'";
+            $sql = "SELECT * FROM Alumnos WHERE primerAp='$s'";
 
             $res = mysqli_query($conexion, $sql);
             

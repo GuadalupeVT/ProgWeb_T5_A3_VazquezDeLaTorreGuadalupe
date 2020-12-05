@@ -15,9 +15,9 @@
         } else {
             $filtro = json_decode($cadena_JSON, true);
 
-            $c = $filtro['c'];
+            $c = $filtro['n'];
 
-            $sql = "SELECT * FROM Alumnos WHERE carrera='$c'";
+            $sql = "SELECT * FROM Alumnos WHERE nombre='$c'";
 
             $res = mysqli_query($conexion, $sql);
             

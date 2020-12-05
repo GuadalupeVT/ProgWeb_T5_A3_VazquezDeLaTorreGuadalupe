@@ -276,9 +276,7 @@ public class AnalizadorJSON {
 
 
             is.close();
-            json = cadena.toString().substring(4);
-
-            jsonObject = new JSONObject(json);
+            json = cadena.toString();
 
 
             jsonObject = new JSONObject(json);

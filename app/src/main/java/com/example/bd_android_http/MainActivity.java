@@ -24,6 +24,7 @@ import controlador.AnalizadorJSON;
 public class MainActivity extends AppCompatActivity {
     EditText usuario,contraseña;
     static boolean mensajeResultados;
+    Intent i;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,16 +36,20 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void abrirActivities(View v){
-        Intent i;
+
         switch (v.getId()){
             case R.id.btn_acceso:  //VALIDAR USUARIO Y CONTRASE{A EN BD DE MySQL
+
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
                 String u = usuario.getText().toString();
                 String p = contraseña.getText().toString();
 
 
                 //Verificar que no vengan datos vacios
                 if (u.isEmpty() || p.isEmpty() ) {
-                    Toast.makeText(this, "CAMPOS VACIOS!!", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getBaseContext(), "CAMPOS VACIOS!!", Toast.LENGTH_LONG).show();
                 } else {
 
 
@@ -53,19 +58,43 @@ public class MainActivity extends AppCompatActivity {
                     NetworkInfo ni = cm.getActiveNetworkInfo();
 
                     if (ni != null && ni.isConnected()) {
-                        new ValidarUsuario().execute(u,p);
-                        Toast.makeText(this, mensajeResultados ? "EXITO" : "ME CAMBIO DE CARRERA", Toast.LENGTH_LONG).show();
-                        if(mensajeResultados){
-                            i=new Intent(this, ActivityMenu.class);
-                            startActivity(i);
-                        }
+                       // new ValidarUsuario().execute(u,p);
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                String url = "http://192.168.0.6:80/ago_dic_2020/Aplicacion_ABCC/API_REST_Android/api_validar_usuario.php";
+                                String metodo = "POST";
+
+                                Map<String, String> mapDatos = new HashMap<String, String>();
+                                mapDatos.put("u", u);
+                                mapDatos.put("p", p);
+
+                                AnalizadorJSON aj = new AnalizadorJSON();
+                                JSONObject resultado = aj.peticionHTTPUsuarios(url, metodo, mapDatos);
+
+                                boolean exito = false;
+                                try {
+                                    exito = resultado.getBoolean("exito");
+                                    MainActivity.mensajeResultados = exito;
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        });
+
                     } else {
                         Log.e("MSJ-->", "Error en el WIFI");
                     }
 
-                    Toast.makeText(this, "Magia", Toast.LENGTH_LONG).show();
-                }
 
+                }
+                    }//run
+                }).start();
+                Toast.makeText(getBaseContext(), mensajeResultados ? "EXITO" : "ME CAMBIO DE CARRERA", Toast.LENGTH_LONG).show();
+                if(mensajeResultados){
+                    i=new Intent(getBaseContext(), ActivityMenu.class);
+                    startActivity(i);
+                }
 
 
 
@@ -95,7 +124,7 @@ class ValidarUsuario extends AsyncTask<String, String, String> {
         boolean exito = false;
         try {
             exito = resultado.getBoolean("exito");
-            ActivityRegistroUsuarios.mensajeResultados = exito;
+            MainActivity.mensajeResultados = exito;
         } catch (JSONException e) {
             e.printStackTrace();
         }

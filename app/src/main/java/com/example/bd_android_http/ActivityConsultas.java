@@ -18,6 +18,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -32,6 +33,7 @@ public class ActivityConsultas extends Activity {
     EditText parametro;
 
     ArrayList<String> datos = new ArrayList<>();
+    AdaptadorAlumno adapter;
 
 
     @Override
@@ -77,13 +79,15 @@ public class ActivityConsultas extends Activity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        AdaptadorAlumno adapter=new AdaptadorAlumno(datos);
+                        adapter=new AdaptadorAlumno(datos);
                         recycler.setAdapter(adapter);
                     }
                 });
             }//run
         }).start();
     }
+
+
     public void consultarAlumno(View view){
         new Thread(new Runnable() {
             @Override
@@ -91,8 +95,34 @@ public class ActivityConsultas extends Activity {
                 String cadenaJSON ="";
                 String url="";
 
-                cadenaJSON = "{\"u\":\"" + URLEncoder.encode(String.valueOf(datos.get("u")), "UTF-8") +"\"}";
-                 url= "http://192.168.0.6:80/ago_dic_2020/Aplicacion_ABCC/API_REST_Android/api_consultas_alumnos.php";
+
+
+
+
+                if(opcion.getSelectedItemId()==0){
+                    try {
+                        cadenaJSON = "{\"nc\":\"" + URLEncoder.encode( parametro.getText().toString(), "UTF-8") +"\"}";
+                        url= "http://192.168.0.6:80/ago_dic_2020/Aplicacion_ABCC/API_REST_Android/api_consultas_alumnos_id.php";
+                    } catch (UnsupportedEncodingException e) {
+                        e.printStackTrace();
+                    }
+                }else  if(opcion.getSelectedItemId()==1){
+                    try {
+                        cadenaJSON = "{\"c\":\"" + URLEncoder.encode( parametro.getText().toString(), "UTF-8") +"\"}";
+                        url= "http://192.168.0.6:80/ago_dic_2020/Aplicacion_ABCC/API_REST_Android/api_consultas_alumnos_carrera.php";
+                    } catch (UnsupportedEncodingException e) {
+                        e.printStackTrace();
+                    }
+                } if(opcion.getSelectedItemId()==2){
+                    try {
+                        cadenaJSON = "{\"s\":\"" + URLEncoder.encode( parametro.getText().toString(), "UTF-8") +"\"}";
+                        url= "http://192.168.0.6:80/ago_dic_2020/Aplicacion_ABCC/API_REST_Android/api_consultas_alumnos_semestre.php";
+                    } catch (UnsupportedEncodingException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+
 
                 String metodo = "POST";
 
@@ -124,7 +154,8 @@ public class ActivityConsultas extends Activity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        AdaptadorAlumno adapter=new AdaptadorAlumno(datos);
+                        adapter=new AdaptadorAlumno(datos);
+                        adapter.notifyDataSetChanged();
                         recycler.setAdapter(adapter);
                     }
                 });

@@ -47,6 +47,7 @@
         android:layout_marginTop="20dp"
         android:layout_marginEnd="20dp"
         android:layout_marginBottom="351dp"
+        android:onClick="abrirActivitiesTablas"
         android:text="@string/btn_modulo_cambios"
         android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="parent"

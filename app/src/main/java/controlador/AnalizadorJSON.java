@@ -90,10 +90,12 @@ public class AnalizadorJSON {
 
 
             is.close();
-            json = cadena.toString();
+            json = cadena.toString().substring(4);
+
+            jsonObject = new JSONObject(json);
 
 
-            jsonObject = new JSONObject(String.valueOf(cadena));
+            jsonObject = new JSONObject(json);
             //jsonObject = new JSONObject(json);
         } catch (IOException | JSONException e) {
             e.printStackTrace();

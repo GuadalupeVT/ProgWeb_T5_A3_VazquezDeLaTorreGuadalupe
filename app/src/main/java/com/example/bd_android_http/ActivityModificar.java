@@ -30,7 +30,7 @@ public class ActivityModificar extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_altas);
+        setContentView(R.layout.activity_modificar);
 
         cajaNumControl = findViewById(R.id.caja_num_control_cambios);
         cajaNombre = findViewById(R.id.caja_nombre_cambios);
@@ -40,6 +40,7 @@ public class ActivityModificar extends AppCompatActivity {
         spinnerSemestre=findViewById(R.id.spinner_semestre_cambios);
         spinnerCarrera=findViewById(R.id.spinner_carrera_cambios);
 
+
         String nc=getIntent().getExtras().getString("nc");
         String n=getIntent().getExtras().getString("n");
         String pa=getIntent().getExtras().getString("pa");
@@ -48,6 +49,7 @@ public class ActivityModificar extends AppCompatActivity {
         String s=getIntent().getExtras().getString("s");
         String c=getIntent().getExtras().getString("c");
 
+        cajaNumControl.setText(nc);
         cajaNombre.setText(n);
         cajaPrimerAp.setText(pa);
         cajaSegundoAp.setText(sa);
@@ -77,6 +79,9 @@ public class ActivityModificar extends AppCompatActivity {
 
             if (ni != null && ni.isConnected()) {
                 new ModificarAlumno().execute(nc, n, pa, sa, e, s, c);
+
+
+
                 Toast.makeText(this, mensajeResultados ? "EXITO" : "ME CAMBIO DE CARRERA", Toast.LENGTH_LONG).show();
             } else {
                 Log.e("MSJ-->", "Error en el WIFI");

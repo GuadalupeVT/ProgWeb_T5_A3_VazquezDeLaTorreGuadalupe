@@ -9,8 +9,11 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -24,83 +27,80 @@ import controlador.AnalizadorJSON;
 
 public class ActivityCambios extends Activity {
 
-    ListView listviewAlumnos;
+    RecyclerView recycler;
 
     ArrayList<String> datos = new ArrayList<>();
-    Intent i = new Intent(this, ActivityModificar.class);
+
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cambios);
+        recycler=findViewById(R.id.recycler_view_cambios);
+        recycler.setLayoutManager(new LinearLayoutManager(this,LinearLayoutManager.VERTICAL,false));
 
-        new MostrarAlumnos().execute();
-
-
-        listviewAlumnos = findViewById(R.id.listview_alumnos_cambios);
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, datos);
-        listviewAlumnos.setAdapter(adapter);
-
-        listviewAlumnos.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        new Thread(new Runnable() {
             @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int posicion, long l) {
-                Object o = listviewAlumnos.getItemAtPosition(posicion);
-                String cad=o.toString();
-                String alumno[]=cad.split("|");
+            public void run() {
+                String url = "http://192.168.0.6:80/ago_dic_2020/Aplicacion_ABCC/API_REST_Android/api_consultas_alumnos.php";
+                String metodo = "POST";
 
-                i.putExtra("nc",alumno[0]);
-                i.putExtra("n",alumno[1]);
-                i.putExtra("pa",alumno[1]);
-                i.putExtra("sa",alumno[1]);
-                i.putExtra("e",alumno[1]);
-                i.putExtra("s",alumno[1]);
-                i.putExtra("c",alumno[1]);
-                startActivity(i);
-            }
-        });
-    }
+                AnalizadorJSON analizadorJSON = new AnalizadorJSON();
+                JSONObject jsonObject = analizadorJSON.consultaHTTP(url);
 
 
-    class MostrarAlumnos extends AsyncTask<String, String, String>{
-
-        @Override
-        protected String doInBackground(String... strings) {
-
-            String url = "http://192.168.0.6:80/ago_dic_2020/Aplicacion_ABCC/API_REST_Android/api_consultas_alumnos.php";
-            String metodo = "POST";
-
-            AnalizadorJSON analizadorJSON = new AnalizadorJSON();
-            JSONObject jsonObject = analizadorJSON.consultaHTTP(url);
+                try {
+                    JSONArray jsonArray = jsonObject.getJSONArray("alumnos");
 
 
-            try {
-                JSONArray jsonArray = jsonObject.getJSONArray("alumnos");
-                // Log.i("MSJ->", String.valueOf(jsonArray));
+                    String cadena = "";
+                    for (int i=0; i<jsonArray.length();i++){
 
+                        cadena = jsonArray.getJSONObject(i).getString("nc") + "," +
+                                jsonArray.getJSONObject(i).getString("n") + "," +
+                                jsonArray.getJSONObject(i).getString("pa") + "," +
+                                jsonArray.getJSONObject(i).getString("sa") + "," +
+                                jsonArray.getJSONObject(i).getString("e") + "," +
+                                jsonArray.getJSONObject(i).getString("s") + "," +
+                                jsonArray.getJSONObject(i).getString("c");
 
-                String cadena = "";
-                for (int i=0; i<jsonArray.length();i++){
+                        datos.add(cadena);
+                    }
 
-                    cadena = jsonArray.getJSONObject(i).getString("nc") + "|" +
-                            jsonArray.getJSONObject(i).getString("n") + "|" +
-                            jsonArray.getJSONObject(i).getString("pa") + "|" +
-                            jsonArray.getJSONObject(i).getString("sa") + "|" +
-                            jsonArray.getJSONObject(i).getString("e") + "|" +
-                            jsonArray.getJSONObject(i).getString("s") + "|" +
-                            jsonArray.getJSONObject(i).getString("c");
-
-                    datos.add(cadena);
-                    Log.i("MSJ->", cadena);
+                } catch (JSONException e) {
+                    e.printStackTrace();
                 }
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        AdaptadorAlumno adapter=new AdaptadorAlumno(datos);
+                        adapter.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
 
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
+                                int posicion=recycler.getChildAdapterPosition(view);
 
-            return null;
-        }
+                                 String cad=datos.get(posicion);
+                                String alumno[]=cad.split(",");
+                                Toast.makeText(getApplicationContext(), "Posision :"+alumno[1], Toast.LENGTH_LONG).show();
+
+                                Intent i = new Intent(getApplicationContext(), ActivityModificar.class);
+                                i.putExtra("nc",alumno[0]);
+                                i.putExtra("n",alumno[1]);
+                                i.putExtra("pa",alumno[2]);
+                                i.putExtra("sa",alumno[3]);
+                                i.putExtra("e",alumno[4]);
+                                i.putExtra("s",alumno[5]);
+                                i.putExtra("c",alumno[6]);
+                                startActivity(i);
+                            }
+                        });
+                        recycler.setAdapter(adapter);
+                    }
+                });
+            }//run
+        }).start();
+
     }
-
-
-
 }//class ActivityBajas

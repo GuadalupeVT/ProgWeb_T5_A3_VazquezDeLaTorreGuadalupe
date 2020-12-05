@@ -13,8 +13,11 @@
         android:layout_height="61dp"
         android:text="@string/btn_modulo_cambios" />
 
-    <ListView
-        android:id="@+id/listview_alumnos_cambios"
+    <androidx.recyclerview.widget.RecyclerView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/recycler_view_cambios"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 </LinearLayout>
